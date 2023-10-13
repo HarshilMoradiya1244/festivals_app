@@ -1,7 +1,13 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:festival_app/modal/festival_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../utils/color_list.dart';
-import '../utils/global.dart';
 
 class FestivalEditScreen extends StatefulWidget {
   const FestivalEditScreen({super.key});
@@ -14,28 +20,51 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
   TextEditingController txtText = TextEditingController();
   double _value = 15;
   int colorIndex = 0;
-  int fontStyle = 0 , imageindex = 0;
+  int fontStyle = 0, imageindex = 0;
   int fontColor = 1, image = 0;
   bool bold = false, bg = true;
   bool italic = false;
   bool font = false;
-  bool imageIndex=false;
+  bool imageIndex = false;
   Alignment txtAligh = Alignment.center;
+  GlobalKey globalKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    List<FestivalModel> l1 =
+        ModalRoute.of(context)!.settings.arguments as List<FestivalModel>;
+    return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title:  const Text("Post Edit",style: TextStyle(color: Colors.white),),
+          title: const Text(
+            "Festival Edit",
+            style: TextStyle(color: Colors.white),
+          ),
           centerTitle: true,
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.arrow_back_outlined,color: Colors.white,)),
+              icon: const Icon(
+                Icons.arrow_back_outlined,
+                color: Colors.white,
+              )),
           actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.share,color: Colors.white,)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.download,color: Colors.white,))
+            IconButton(
+                onPressed: () async{
+                  File file = await saveImage();
+                  await Share.shareXFiles([XFile(file.path)]);
+                },
+                icon: const Icon(
+                  Icons.share,
+                  color: Colors.white,
+                )),
+            IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.download,
+                  color: Colors.white,
+                ))
           ],
           backgroundColor: Colors.blue,
         ),
@@ -46,7 +75,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                 Padding(
                   padding: const EdgeInsets.all(10),
                   child: RepaintBoundary(
-                    // key: globalKey,
+                    key: globalKey,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -56,7 +85,10 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                           color: colors[colorIndex],
                         ),
                         Image(
-                          image: AssetImage("${Global.g1.festivalList[0]}"),
+                          image: AssetImage(
+                            "${l1[imageindex].image}",
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.4,
                           fit: BoxFit.cover,
                         ),
                         Container(
@@ -66,13 +98,13 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                           child: SelectableText(
                             "${txtText.text}",
                             style: TextStyle(
-                              color:  colors[fontColor],
+                              color: colors[fontColor],
                               fontSize: _value,
                               fontFamily: fontList[fontStyle],
                               fontWeight:
-                              bold ? FontWeight.bold : FontWeight.normal,
+                                  bold ? FontWeight.bold : FontWeight.normal,
                               fontStyle:
-                              italic ? FontStyle.italic : FontStyle.normal,
+                                  italic ? FontStyle.italic : FontStyle.normal,
                             ),
                           ),
                         ),
@@ -81,13 +113,13 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.28,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   width: MediaQuery.of(context).size.width * 1,
                   color: Colors.grey,
                   child: Column(
                     children: [
                       const SizedBox(
-                        height: 9,
+                        height: 8,
                       ),
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -127,7 +159,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                                     } else {
                                       colorIndex = 0;
                                     }
-                                    bg=false;
+                                    bg = false;
                                   });
                                 },
                                 icon: const Icon(Icons.color_lens_outlined)),
@@ -164,9 +196,11 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                                 },
                                 icon: const Icon(Icons.format_align_left)),
                             IconButton(
-                                onPressed: () {setState(() {
-                                  txtAligh = Alignment.center;
-                                });},
+                                onPressed: () {
+                                  setState(() {
+                                    txtAligh = Alignment.center;
+                                  });
+                                },
                                 icon: const Icon(
                                     Icons.format_align_center_outlined)),
                             IconButton(
@@ -179,7 +213,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                             IconButton(
                                 onPressed: () {
                                   setState(() {
-                                    fontColor = 1;
+                                    fontColor = 0;
                                     colorIndex = 0;
                                     bold = false;
                                     italic = false;
@@ -195,7 +229,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                       ),
                       Slider(
                         value: _value,
-                        activeColor: Colors.blue,
+                        activeColor: Colors.white,
                         onChanged: (double s) {
                           setState(() {
                             _value = s;
@@ -225,7 +259,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                                     });
                                   },
                                   child: Image.asset(
-                                    "${a1[index].image}",
+                                    "${l1[index].image}",
                                     fit: BoxFit.cover,
                                   )),
                             );
@@ -235,7 +269,7 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: SizedBox(
-                          height: 36,
+                          height: 35,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: fontList.length,
@@ -249,7 +283,8 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                                 child: Text(
                                   "Hello   ",
                                   style: TextStyle(
-                                      fontSize: 20, fontFamily: fontList[index]),
+                                      fontSize: 20,
+                                      fontFamily: fontList[index]),
                                 ),
                               );
                             },
@@ -265,5 +300,15 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
         ),
       ),
     );
+  }
+
+  Future<dynamic> saveImage() async {
+    RenderRepaintBoundary boundary =
+        globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage();
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    String imagepath =
+        ("${DateTime.now().year}${DateTime.now().month}${DateTime.now().day}${DateTime.now().hour}${DateTime.now().minute}${DateTime.now().second}");
+    return await File("storage/emulated/0/Download/$imagepath.png").writeAsBytes(byteData!.buffer.asUint8List());
   }
 }

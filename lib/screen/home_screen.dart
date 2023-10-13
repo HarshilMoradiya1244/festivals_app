@@ -1,3 +1,4 @@
+import 'package:festival_app/modal/festival_model.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/global.dart';
@@ -11,8 +12,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    Global.g1.festivalsList.map((e) {
+      FestivalModel a1 =FestivalModel.fromMap(e);
+      Global.g1.modalList.add(a1);
+    },).toList();
+  }
+  @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -29,7 +38,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisCount: 2, mainAxisExtent: 190),
             itemBuilder: (context, index) => InkWell(
                 onTap: () {
-                  Navigator.pushNamed(context, 'postEditScreen');
+                  List<FestivalModel> l1 = [];
+                  Global.g1.festivalList[index].name;
+                  for (var x in Global.g1.modalList) {
+                    if (x.name == Global.g1.festivalList[index].name) {
+                      l1.add(x);
+                    }
+                  }
+                  Navigator.pushNamed(context, 'festival', arguments: l1);
                 },
                 child: boxTile(index)),
           ),
@@ -62,6 +78,5 @@ class _HomeScreenState extends State<HomeScreen> {
         )
       ],
     );
-
   }
 }
