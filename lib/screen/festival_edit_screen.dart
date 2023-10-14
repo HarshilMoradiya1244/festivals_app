@@ -84,19 +84,21 @@ class _FestivalEditScreenState extends State<FestivalEditScreen> {
                           width: MediaQuery.of(context).size.width,
                           color: colors[colorIndex],
                         ),
-                        Visibility(visible:bg,
-                          child: InkWell(
-                            onTap: (){
-                              setState(() {
-                                bg=false;
-                              });
-                            },
-                            child: Image(
-                              image: AssetImage(
-                                "${l1[imageindex].image}",
+                        Container(
+                          child: Visibility(visible:bg,
+                            child: InkWell(
+                              onTap: (){
+                                setState(() {
+                                  bg=false;
+                                });
+                              },
+                              child: Image(
+                                image: AssetImage(
+                                  "${l1[imageindex].image}",
+                                ),
+                                height: MediaQuery.of(context).size.height * 0.4,
+                                fit: BoxFit.cover,
                               ),
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
